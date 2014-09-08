@@ -1,0 +1,12 @@
+{% set autofs  = salt['grains.filter_by']( {
+  'Debian': {
+    'package': 'autofs',
+    'service': 'autofs',
+    'config': '/etc/auto.master',
+  },
+  'RedHat': {
+    'package': 'autofs',
+    'service': 'autofs',
+    'config': '/etc/auto.master',
+  },
+}, merge=salt['pillar.get']('autofs:lookup')) %}

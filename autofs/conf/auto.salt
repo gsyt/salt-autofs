@@ -1,0 +1,13 @@
+{%- set config = {
+    'mountpoints': salt['pillar.get']('autofs:config:mounts', []), 
+} -%}
+{%- for mountname in config.mountpoints -%}
+  {%- set mount = {
+    'path': salt['pillar.get']('autofs:config:mounts:' ~ mountname ~ ':path', ''), 
+    'options': salt['pillar.get']('autofs:config:mounts:' ~ mountname  ~ ':options', ''), 
+    'target': salt['pillar.get']('autofs:config:mounts:' ~ mountname  ~ ':target', ''), 
+  } -%}
+  {%- if mount.path and mount.target %}
+{{ mount.path }} {{ mount.options }}  {{ mount.target }}
+  {%- endif -%}
+{%- endfor -%}
