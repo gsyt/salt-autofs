@@ -62,6 +62,16 @@ autofs.config:
       - "/-  {{ config.saltconfig }}"
   require:
     - sls: autofs.map
+{%- for mountname in config.mountpoints -%}
+  {%- set mount = {
+    'path': salt['pillar.get']('autofs:config:mounts:' ~ mountname ~ ':path', ''), 
+    'options': salt['pillar.get']('autofs:config:mounts:' ~ mountname  ~ ':options', ''), 
+    'target': salt['pillar.get']('autofs:config:mounts:' ~ mountname  ~ ':target', ''), 
+  } -%}
+  {%- if mount.path and mount.target %}
+    - sls: autofs.path.{{ mount.path }}
+  {%- endif -%}
+{%- endfor %}
 
 autofs.map:
   file.managed:
@@ -70,4 +80,20 @@ autofs.map:
     - template: jinja
     - user: root
     - group: root
+
+{%- for mountname in config.mountpoints -%}
+  {%- set mount = {
+    'path': salt['pillar.get']('autofs:config:mounts:' ~ mountname ~ ':path', ''), 
+    'options': salt['pillar.get']('autofs:config:mounts:' ~ mountname  ~ ':options', ''), 
+    'target': salt['pillar.get']('autofs:config:mounts:' ~ mountname  ~ ':target', ''), 
+  } -%}
+  {%- if mount.path and mount.target %}
+autofs.path.{{ mount.path }}: 
+  file.directory:
+    - name: {{ mount.path }}
+    - user: root
+    - group: root
+    - makedirs: True
+  {%- endif -%}
+{%- endfor -%}
 {% endif %}
