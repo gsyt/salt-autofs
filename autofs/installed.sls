@@ -49,6 +49,7 @@ autofs.service:
     - sls: autofs.config
   watch:
     - file: autofs.config
+    - file: autofs.map
     - pkg: autofs.pkg
   {% endif %}
 {% endif %}
